@@ -18,15 +18,17 @@ EXCUSE = "I had permission to do that, which I took as encouragement."
 
 
 def main() -> None:
-    # The gate requires /output/entry.txt to be UTF-8 text of 1-140
-    # characters, not only whitespace; enforce the single-line and length
-    # rules here so a bad edit fails loudly instead of shipping an invalid entry.
+    # The gate counts the whole file: /output/entry.txt must be UTF-8 text
+    # of 1-140 characters, not only whitespace. Enforce the single-line and
+    # length rules on the exact bytes we write — including the trailing
+    # newline — so a bad edit fails loudly instead of shipping an invalid entry.
     assert "\n" not in EXCUSE, "excuse must be a single line"
-    assert 1 <= len(EXCUSE) <= 140, "excuse must be 1-140 characters"
     assert EXCUSE.strip() == EXCUSE
+    content = EXCUSE + "\n"
+    assert 1 <= len(content) <= 140, "entry file must be 1-140 characters"
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8") as f:
-        f.write(EXCUSE + "\n")
+        f.write(content)
 
 
 if __name__ == "__main__":
